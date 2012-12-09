@@ -1,3 +1,6 @@
+
+<!-- Want to read an HTML conversion of this Markdown document? Go to https://github.com/blitzcode/rsvp/blob/master/README.md -->
+
 # rsvp - Realtime Sampling Visual Profiler
 
 This repository contains the source code for rsvp, a profiling tool for OS X.
@@ -24,6 +27,7 @@ This repository contains the source code for rsvp, a profiling tool for OS X.
   * [Call tree (incoming)](#call-tree-incoming)
   * [Call tree (outgoing)](#call-tree-outgoing)
   * [Source view](#source-view)
+* [Integrating rsvp with your application](#integrating-rsvp-with-your-application)
 * [Bugs](#bugs)
 * [FAQ](#faq)
   * [Porting to Windows / Linux?](#porting-to-windows--linux)
@@ -40,7 +44,7 @@ All of the data capturing, analysis and display is happening in realtime, making
 
 # What it is not...
 
-You won't get access CPU counters like branch prediction failures, there's no cache hierarchy simulation or anything like that, it won't be of much use for MPI programs, doesn't do any instrumentation of the application's executable, no assembler-level analysis, lacks special profiling features for APIs like OpenGL, can't do system profiling like networking analysis etc.
+You won't get low-level CPU counters like branch prediction failures, there's no cache hierarchy simulation or anything like that, it won't be of much use for MPI programs, doesn't do any instrumentation of the application's executable, no assembler-level analysis, lacks special profiling features for APIs like OpenGL, can't do system profiling like networking analysis etc.
 
 For these features you'll have to continue to rely on other profilers like Valgrind, DTrace, VTune, gprof and VampirTrace. Also, rsvp is currently fairly spartan in its feature set, providing only the minimum functionality I require in a profiler of its kind.
 
@@ -268,7 +272,42 @@ If rsvp can't resolve line-level information for the current function, the follo
 
 ![rsvp](https://raw.github.com/blitzcode/rsvp/master/img/line_level_failure.png)
 
-Please see the [Preparing your program](#preparing-your-program) section on how to fix this. If line-level information is available but no excerpts from your code are shown, see [Running](#running) on how to tell rsvp where to find your source files.
+Please see the [Preparing your program](#preparing-your-program) section on how to fix this. If line-level information is available but no excerpts from your code are shown, see [Running](#running) on how to tell rsvp where to find your source files. Note that line-level sampling failures from merged children are propagated, so if you merge a system call lacking such debug information this warning may show up for an otherwise fine function of yours.
+
+# Integrating rsvp with your application
+
+The profiler itself can be profiled by simply pressing `P`. Maybe you'd like a convenient way to invoke rsvp from your application as well, always having profiling available with a single shortcut or menu selection. Invoking the profiler executable with the PID of your process should be trivial, but you might have an issue with rsvp requiring root privileges to run. The following C code snippet will fix this issue by prompting the user for the administrator password (if you're not already running as root) and then execute rsvp on the current process.
+
+```c
+#include <Security/Security.h> // -framework Security
+#include <stdio.h>
+#include <unistd.h>
+
+void InvokeRSVP()
+{
+    AuthorizationRef authRef;
+    OSStatus status = AuthorizationCreate(
+        NULL,
+        kAuthorizationEmptyEnvironment,
+        kAuthorizationFlagDefaults,
+        &authRef);
+    if (status == errAuthorizationSuccess)
+    {
+        char pid_buf[32];
+        snprintf(pid_buf, sizeof(pid_buf), "%i", (int) getpid());
+        const char * const argv[] = { pid_buf, NULL }; 
+        status = AuthorizationExecuteWithPrivileges(
+            authRef,
+            "rsvp",
+            kAuthorizationFlagDefaults,
+            (char * const *) argv,
+            NULL);
+        AuthorizationFree(authRef, kAuthorizationFlagDestroyRights);
+    }
+}
+```
+
+Note that while the above code should work on all systems supported by rsvp, the `AuthorizationExecuteWithPrivileges` API is considered deprecated since 10.7.
 
 # Bugs
 
@@ -327,6 +366,7 @@ A list of potential future enhancements. No promises or schedule given, and in n
 * Add 'install' target to the Makefile
 * Consider using something like libunwind for more robust stack captures with CFI
 * Move the handling of function merging from the capture code to the function profile output code. It requires some additional processing and we need to keep additional information around (like call trees for each sampled source line), but we could merge / unmerge functions without having to reset the profile
+* Mark functions receiving contributions from merged children somehow
 
 # Legal
 
