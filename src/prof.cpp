@@ -2566,6 +2566,8 @@ public:
             const uint idx_base = m_pos.size();
 
             // Position & texture coordinates
+            //
+            // TODO: Re-use last two vertices from the second character on
             m_tex_coords.push_back(Vec2f(
                ftx,
                fty));
@@ -4362,6 +4364,9 @@ void SpecialKeyCallback(int key, int x, int y)
         case GLUT_KEY_F1: // Help
             {
                 // Open project URL, make sure we don't do it as root but as the actual user
+                //
+                // TODO: This doesn't work when we're not invoked with sudo, for instance from
+                //       another application through AuthorizationExecuteWithPrivileges()
                 char buf[256];
                 std::snprintf(buf, sizeof(buf), "sudo -u $SUDO_USER open %s", g_project_url);
                 system(buf);
