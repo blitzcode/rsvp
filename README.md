@@ -62,7 +62,7 @@ Compiling has no prerequisites aside from Apple's [command line development tool
 
     $ make
 
-in the source directory. You should have a `rsvp` executable after a few seconds.
+in the source directory. You should have a `rsvp` executable after a few seconds. You might want to copy or soft-link the executable somewhere in your path like `/usr/bin`.
 
 # Preparing your program
 
@@ -98,6 +98,10 @@ Rsvp needs to run as root to allow it the level of access required to inspect yo
 or simply with a process name
 
     $ sudo rsvp Firefox
+
+Launching rsvp on the process consuming the most CPU resources can be done with a small pipeline
+
+    $ ps -r -A -o pid | tail -n +2 | head -n 1 | xargs sudo rsvp
 
 If you want source and line-level information you need to run [dsymutil][dsymutil] once on your compiled program as explained in the [Preparing your program](#preparing-your-program) section. If you want to see excerpts from your source code inside of rsvp, you might need to help it locate your source files with the `RSVP_SRC_PATH` environment variable. By default rsvp will look in the program executable directory only. Keep in mind that programs launched through `sudo` do not inherit this environment variable by default. You might want to launch rsvp like this:
 
@@ -308,6 +312,23 @@ void InvokeRSVP()
 ```
 
 Note that while the above code should work on all systems supported by rsvp, the `AuthorizationExecuteWithPrivileges` API is considered deprecated since 10.7.
+
+If you don't want to modify your program, you can achieve something similar with a little AppleScript and [Automator][automator] trickery. This short script will invoke rsvp on the current foreground application:
+
+[automator]:http://support.apple.com/kb/HT2488
+
+```applescript
+tell application "System Events"
+    set app_name to name of the first process whose frontmost is true
+    do shell script "rsvp " & app_name with administrator privileges
+end tell
+```
+
+You can turn this script into a system service by creating one inside of Automator and have it run the snippet above:
+
+![automator](https://raw.github.com/blitzcode/rsvp/master/img/automator.png)
+
+Now, invoking rsvp on the current application will be available from the 'Services' menu. If you like, you can also assign a shortcut to it in the keyboard preferences.
 
 # Bugs
 
