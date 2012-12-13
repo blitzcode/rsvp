@@ -2084,6 +2084,11 @@ public:
         }
 
         // Process system calls
+        //
+        // TODO: There seems to be a bug in fs_usage where even if we specify a PID we still get I/O
+        //       for other processes. This is pretty easy to see, for instance running the example
+        //       from the man page, 'fs_usage -w -f filesys Mail', clearly shows other process names
+        //       in the process name column. We might need to add our own layer of filtering on top
         while (std::fgets(buf, sizeof(buf), m_pipe.m_stdout) != NULL)
         {
             m_iop++;
