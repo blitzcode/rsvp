@@ -38,9 +38,11 @@ This repository contains the source code for rsvp, a profiling tool for OS X.
 
 # What is it?
 
-Rsvp provides function / method and source level profiling with call tree analysis for multi-threaded C, C++ and ObjC programs. It also monitors memory allocations and disk I/O to give you a more complete picture.
+Rsvp provides function and source level profiling with call tree analysis for C, C++ and Objective-C programs. It also monitors things like memory allocations, disk I/O and thread scheduling to give you a more complete picture.
 
-All of the data capturing, analysis and display is happening in realtime, making rsvp especially suited for dynamic applications like games or GUI based ones in general. It's light on UI and many times you'll just want to glance at it while interacting with your application to better understand its behavior.
+Data capturing, analysis and display is happening in realtime, making rsvp especially suited for dynamic and interactive applications (think games or GUI ones in general). Its own GUI has a fast keyboard interface and makes efficient use of screen space. Many times just glancing at rsvp while interacting with your application will reveal useful information.
+
+The code is small (less than 5000 lines) and under a very liberal license. If you always want to have access to profiling information, it is easy to integrate and distribute with your project.
 
 # What it is not...
 
