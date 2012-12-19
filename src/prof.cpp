@@ -4450,7 +4450,7 @@ int main(int argc, char *argv[])
     {
         // Process name, translate into a PID by using the ps utility
         char buf[1024];
-        std::snprintf(buf, sizeof(buf), "ps -A | grep -v grep | grep -v %s | grep %s",
+        std::snprintf(buf, sizeof(buf), "ps -A -o pid,comm | grep -v grep | grep -v %s | grep %s",
             argv[0], argv[1]);
         std::FILE *pipe = popen(buf, "r");
         assert(pipe != NULL);
