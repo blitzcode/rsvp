@@ -131,7 +131,15 @@ public:
     ATOS_Pipe(pid_t pid)
     {
         // Check for atos
-        if (std::system("atos 2> /dev/null") != 0)
+        //
+        // Since 10.9 calling atos directly seems to be deprecated. The warning suggest
+        // to invoke it through xcrun, which seems to work fine on 10.6 already
+        //
+        // Also see here:
+        //
+        // http://root.cern.ch/phpBB3/viewtopic.php?f=3&t=17190&start=30
+        // https://github.com/allending/Kiwi/pull/365
+        if (std::system("xcrun atos 2> /dev/null") != 0)
             FatalExit("Can't find 'atos' command line utility - dev. tools not installed?");
 
         // TODO: The bi-directional popen() only works with this environment
@@ -140,7 +148,7 @@ public:
             assert(!"setenv failed");
 
         char buf[64];
-        std::snprintf(buf, sizeof(buf), "atos -p %i", pid);
+        std::snprintf(buf, sizeof(buf), "xcrun atos -p %i", pid);
         m_pipe = popen(buf, "r+");
         assert(m_pipe != NULL);
     }
