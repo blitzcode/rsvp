@@ -226,8 +226,8 @@ public:
                 std::strncpy(symbol, GetUnresolvedSymbolName(), sizeof(symbol));
 
             // Check if we already have that symbol name in the table
-            const uint32 sym_hash = BernsteinHash(symbol) ^ BernsteinHash(module);
-            std::map<uint32, uint32>::iterator it_sym = m_hash_to_sym_id.find(sym_hash);
+            const uint64 sym_hash = BernsteinHash(symbol) ^ BernsteinHash(module);
+            std::map<uint64, uint32>::iterator it_sym = m_hash_to_sym_id.find(sym_hash);
             if (it_sym == m_hash_to_sym_id.end())
             {
                 // Add to symbol and module name string table
@@ -238,12 +238,12 @@ public:
 
                 // Hash-to-ID translation entry
                 it_sym = m_hash_to_sym_id.insert
-                    (std::map<uint32, uint32>::value_type(sym_hash, new_id)).first;
+                    (std::map<uint64, uint32>::value_type(sym_hash, new_id)).first;
             }
 
             // Check if we already have that file name in the table
-            const uint32 file_hash = BernsteinHash(file_name);
-            std::map<uint32, uint16>::iterator it_file = m_hash_to_file_name_id.find(file_hash);
+            const uint64 file_hash = BernsteinHash(file_name);
+            std::map<uint64, uint16>::iterator it_file = m_hash_to_file_name_id.find(file_hash);
             if (it_file == m_hash_to_file_name_id.end())
             {
                 // Add to file name string table
@@ -252,7 +252,7 @@ public:
 
                 // Hash-to-ID translation entry
                 it_file = m_hash_to_file_name_id.insert
-                    (std::map<uint32, uint16>::value_type(file_hash, new_id)).first;
+                    (std::map<uint64, uint16>::value_type(file_hash, new_id)).first;
             }
 
             // Update cache
@@ -260,6 +260,12 @@ public:
             cache.m_sym_id = (* it_sym).second;
             cache.m_file_name_id = (* it_file).second;
             cache.m_line_number = line_number;
+
+            if (std::strcmp(symbol,    SymbolIDToName  ((* it_sym ).second)) != 0)
+            {
+                printf("'%s' != '%s'\n", symbol, SymbolIDToName((* it_sym ).second));
+            }
+
             assert(std::strcmp(symbol,    SymbolIDToName  ((* it_sym ).second)) == 0);
             assert(std::strcmp(module,    SymbolIDToModule((* it_sym ).second)) == 0);
             assert(std::strcmp(file_name, FileIDToName    ((* it_file).second)) == 0);
@@ -319,7 +325,7 @@ protected:
     } m_cache[65536 * 32]; // 32MB
 
     // Table of unique symbol names and map to translate string hash -> table location
-    std::map<uint32, uint32> m_hash_to_sym_id;
+    std::map<uint64, uint32> m_hash_to_sym_id;
     struct SymbolName
     {
         std::string m_symbol;
@@ -328,24 +334,28 @@ protected:
     std::vector<SymbolName> m_sym_table;
 
     // Table of unique file names and map to translate string hash -> table location
-    std::map<uint32, uint16> m_hash_to_file_name_id;
+    std::map<uint64, uint16> m_hash_to_file_name_id;
     std::vector<std::string> m_file_name_table;
 
     std::string m_unresolved_sym_name;
 
-    uint32 BernsteinHash(const char *str_) const
+    uint64 BernsteinHash(const char *str_) const
     {
-        // We could use a better hash function, but this seems to be collision
-        // free so far
+        // The original Bernstein hash enventually had some collisions, this is a simple
+        // 64 bit extension of it
 
         const uchar *str = reinterpret_cast<const uchar *> (str_);
-        uint32 hash = 5381;
+        uint32 hash_a = 5381;
+        uint32 hash_b = 5387;
         int c;
 
         while ((c = *str++))
-            hash = hash * 33 ^ c;
+        {
+            hash_a = hash_a * 33 ^ c;
+            hash_b = hash_b * 35 ^ c;
+        }
 
-        return hash;
+        return uint64(hash_a) | (uint64(hash_b) << 32);
     }
 
     void ExtractModuleAndFileName(
