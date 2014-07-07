@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
