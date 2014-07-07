@@ -140,7 +140,13 @@ public:
         //
         // http://root.cern.ch/phpBB3/viewtopic.php?f=3&t=17190&start=30
         // https://github.com/allending/Kiwi/pull/365
-        if (std::system("xcrun atos 2> /dev/null") != 0)
+        //
+        // The problem is, that the atos executable located through xcrun has different
+        // behavior than /usr/bin/atos. Starting atos in batch mode seems to freeze the
+        // target process, making profiling impossible. We stick with the deprecated atos
+        // for now, will have to look for a different solution once it is removed
+        //
+        if (std::system("atos 2> /dev/null") != 0)
             FatalExit("Can't find 'atos' command line utility - dev. tools not installed?");
 
         // TODO: The bi-directional popen() only works with this environment
@@ -149,7 +155,7 @@ public:
             assert(!"setenv failed");
 
         char buf[64];
-        std::snprintf(buf, sizeof(buf), "xcrun atos -p %i", pid);
+        std::snprintf(buf, sizeof(buf), "atos -p %i", pid);
         m_pipe = popen(buf, "r+");
         assert(m_pipe != NULL);
     }

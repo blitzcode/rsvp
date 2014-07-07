@@ -54,7 +54,7 @@ If all this didn't scare you off and a lean & immediate realtime profiling tool 
 
 # System requirements
 
-OS X versions 10.6, 10.7 and 10.8 are currently supported. Development tools need to be installed for building and profiling.
+OS X versions 10.6 through 10.9 are currently supported. Development tools need to be installed for building and profiling.
 
 # Building the profiler
 
@@ -350,6 +350,7 @@ I actually like the look and feel of the simple OpenGL + keyboard controls only 
 
 A list of potential future enhancements. No promises or schedule given, and in no particular order. There are also plenty of 'TODO' comments in the source code.
 
+* Profiler currently uses /usr/bin/atos, which is deprecated on 10.9+. The new supported way is invoking atos through xcrun, calling `/Applications/Xcode.app/Contents/Developer/usr/bin/atos`. This version of atos unfortunately freezes the target process when invoked in batch mode, making profiling impossible
 * Varied-pitch font rendering to display symbol names more compact
 * Option to let profiler launch the target so we don't miss things which happen at startup
 * Command line switch to open window left / right / center
