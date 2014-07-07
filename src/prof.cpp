@@ -3000,9 +3000,9 @@ void DrawThreadDisplay()
 
     // Thread times
     std::strncpy(buf, "Live thread CPU time: ", sizeof(buf));
-    std::strncat(buf, SecondsToHMS(g_prof_data.m_live_threads_user_time), sizeof(buf));
-    std::strncat(buf, " (User) ", sizeof(buf));
-    std::strncat(buf, SecondsToHMS(g_prof_data.m_live_threads_system_time), sizeof(buf));
+    std::strncat(buf, SecondsToHMS(g_prof_data.m_live_threads_user_time), sizeof(buf) - 1);
+    std::strncat(buf, " (User) ", sizeof(buf) - 1);
+    std::strncat(buf, SecondsToHMS(g_prof_data.m_live_threads_system_time), sizeof(buf) - 1);
     std::snprintf(
         &buf[std::strlen(buf)], sizeof(buf) - std::strlen(buf), " (System), Ratio %.2f : 1",
         float(g_prof_data.m_live_threads_user_time / g_prof_data.m_live_threads_system_time));
