@@ -6,6 +6,7 @@ all : rsvp
 # Compiler and linker flags
 CXXFLAGS = -g -pthread -Wall -Wextra -Wno-unused-parameter \
            -O3 -mtune=native -fno-omit-frame-pointer \
+	   -Wno-deprecated
 #          -fno-inline
 #          -DNDEBUG
 LDFLAGS  = -framework OpenGL \
