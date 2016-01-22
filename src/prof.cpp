@@ -146,7 +146,7 @@ public:
         // target process, making profiling impossible. We stick with the deprecated atos
         // for now, will have to look for a different solution once it is removed
         //
-        if (std::system("atos 2> /dev/null") != 0)
+        if (std::system("atos --help 2> /dev/null") != 0)
             FatalExit("Can't find 'atos' command line utility - dev. tools not installed?");
 
         // TODO: The bi-directional popen() only works with this environment
