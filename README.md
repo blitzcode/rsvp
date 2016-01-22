@@ -54,7 +54,7 @@ If all this didn't scare you off and a lean & immediate realtime profiling tool 
 
 # System requirements
 
-OS X versions 10.6 through 10.9 are currently supported. Development tools need to be installed for building and profiling.
+OS X versions 10.6 through 10.10 are currently supported, 10.11 might work. Development tools need to be installed for building and profiling.
 
 # Building the profiler
 
