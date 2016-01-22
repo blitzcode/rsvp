@@ -1,5 +1,5 @@
 
-// rsvp | (C) 2012 Tim C. Schroeder | www.blitzcode.net
+// rsvp | (C) 2016 Tim C. Schroeder | www.blitzcode.net
 
 #include <cstdio>
 #include <cstdlib>
