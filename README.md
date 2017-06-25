@@ -256,7 +256,7 @@ Pressing `M` switches the call tree into outgoing mode and back.
 
 ![rsvp](https://raw.github.com/blitzcode/rsvp/master/img/call_tree_outgoing.png)
 
-The outgoing tree shows the functions invoked from the selected one. A hit count and percentage is displayed for the directly called (first level) functions. The percentage is based on how much time is spend in the called function and its descendants relative to all functions called from the selected one. As an example, a value of 25% for function A would mean a quarter of the time spend in the entire outgoing call tree was spend in A and its descendants. There is no further statistics for the subtree of a direct callee, and its coloring is solely based on the first level function.
+The outgoing tree shows the functions invoked from the selected one. A hit count and percentage is displayed for the directly called (first level) functions. The percentage is based on how much time is spent in the called function and its descendants relative to all functions called from the selected one. As an example, a value of 25% for function A would mean a quarter of the time spend in the entire outgoing call tree was spent in A and its descendants. There is no further statistics for the subtree of a direct callee, and its coloring is solely based on the first level function.
 
 The red highlighted line repeats the selected function name and shows three sample counts:
 
@@ -264,7 +264,7 @@ The red highlighted line repeats the selected function name and shows three samp
 * **D** escendants - The number of samples recorded for the entire outgoing call tree of the selection function (all of its descendants). The percentage shows the contribution to the total (own + descendants) sample count.
 * **T** otal - The total number of samples recorded for the selected function and all of its descendants. The percentage shows the total (inclusive) contribution to the function profile.
 
-The outgoing tree in the picture above shows a function where 97.4% of the total time is spend in the descendant functions, and 95.5% of that time goes through a function called mach_vm_read_overwrite. The selected function itself only contributes 2.6%. The total contribution to the function profile of the selected function and all its descendants is 27.3%.
+The outgoing tree in the picture above shows a function where 97.4% of the total time is spent in the descendant functions, and 95.5% of that time goes through a function called mach_vm_read_overwrite. The selected function itself only contributes 2.6%. The total contribution to the function profile of the selected function and all its descendants is 27.3%.
 
 ### Source view
 
